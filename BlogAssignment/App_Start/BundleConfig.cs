@@ -24,7 +24,11 @@ namespace BlogAssignment
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css",
+                      "~/Content/MyCustomCss.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/tinyMCE_JS").Include(
+                        "~/Scripts/tinyMCE_JS.js"));            
         }
     }
 }

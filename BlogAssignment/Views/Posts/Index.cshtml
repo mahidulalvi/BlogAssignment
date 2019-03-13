@@ -1,0 +1,200 @@
+﻿@model List<CreatePostViewModelForIndex>
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<h2>Posts</h2>
+@if (User.IsInRole("Admin"))
+{
+    <a class="btn btn-primary" href="@Url.Action("CreateAPost", "Posts")">Create New Post</a>
+}
+else
+{
+    <h5 style="text-align: right;"><strong>@Html.ActionLink("Sign in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</strong> as Admin to create/edit content</h5>
+}
+@if (!Model.Any())
+{
+    <div style="margin-top:15px;">
+        <p><strong>No contents to show</strong></p>
+    </div>
+}
+else
+{
+    @*
+                                        //Code not deleted for future testing purposes
+
+            <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Body</th>
+                    <th>Date Created</th>
+                    <th>Date Updated</th>
+                    <th>Published</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var record in Model)
+                {
+                    <tr>
+                        <td>@record.Title</td>
+                        <td>@Html.Raw(record.Body)</td>
+                        <td>@record.DateCreated.ToString("yyyy/MM/dd HH:mm")</td>
+                        <td>@record.DateUpdated.ToString("yyyy/MM/dd HH:mm")</td>
+                        <td>@record.Published</td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <td><a href="@Url.Action("IndividualContentIndex", "Posts", new { Id = record.Id })">Details</a></td>
+                            <td><a href="@Url.Action("EditAPost", "Posts", new { Id = record.Id })">Edit</a></td>
+                            <td>
+                                <form method="post" action="@Url.Action("DeleteAPost", "Posts", new { Id = record.Id })">
+                                    <a href="#" class="btn-delete">Delete</a>
+                                </form>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>                             //Code not deleted for future testing purposes
+        </table>*@
+    <div class="container">
+        <div class="row masonry-grid">
+            <div class="col-lg-4 hidden-md hidden-sm hidden-xs masonry-column">
+                @for (int i = 0; i < Model.Count(); i++)
+                {
+
+                    <div>
+                        @if ((i + 1) % 2 == 0 && (i + 1) % 3 != 0)
+                        {
+                            <a href="@Url.Action("IndividualContentIndex", "Posts", new { Id = Model[i].Id })" class="thumbnail">
+                                <div class="container-for-image">
+                                    @if (Model[i].MediaUrl.Length > 0)
+                                    {
+                                        <img class="img-responsive" src="@Url.Content(Model[i].MediaUrl)" />
+                                    }
+                                    <div class="middle">
+                                        <div class="content-title-text">
+                                            <p>Originally posted: @Model[i].DateCreated.ToString("dd MMM, yyyy" + " on " + "HH:mm")</p>
+                                            <p>Last updated: @Model[i].DateUpdated.ToString("dd MMM, yyyy" + " on " + "HH:mm")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p>@Model[i].Title By @Model[i].User</p>
+                                <p>@Html.Raw(Model[i].Body)</p>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="col-lg-4 hidden-md hidden-sm hidden-xs masonry-column">
+                @for (int j = 0; j < Model.Count(); j++)
+                {
+                    <div>
+                        @if ((j + 1) % 2 == 1 && (j + 1) % 3 != 0)
+                        {
+                            <a href="@Url.Action("IndividualContentIndex", "Posts", new { Id = Model[j].Id })" class="thumbnail">
+                                <div class="container-for-image">
+                                    @if (Model[j].MediaUrl.Length > 0)
+                                    {
+                                        <img class="img-responsive" src="@Url.Content(Model[j].MediaUrl)" />
+                                    }
+                                    <div class="middle">
+                                        <div class="content-title-text">
+                                            <p>Originally posted: @Model[j].DateCreated.ToString("dd MMM, yyyy" + " on " + "HH:mm")</p>
+                                            <p>Last updated: @Model[j].DateUpdated.ToString("dd MMM, yyyy" + " on " + "HH:mm")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p>@Model[j].Title By @Model[j].User</p>
+                                <p>@Html.Raw(Model[j].Body)</p>
+                            </a>
+                        }
+                    </div>
+                }
+
+            </div>
+            <div class="col-lg-4 hidden-md hidden-sm hidden-xs masonry-column">
+                @for (int k = 0; k < Model.Count(); k++)
+                {
+                    <div>
+                        @if ((k + 1) % 3 == 0)
+                        {
+                            <a href="@Url.Action("IndividualContentIndex", "Posts", new { Id = Model[k].Id })" class="thumbnail">
+                                <div class="container-for-image">
+                                    @if (Model[k].MediaUrl.Length > 0)
+                                    {
+                                        <img class="img-responsive" src="@Url.Content(Model[k].MediaUrl)" />
+                                    }
+                                    <div class="middle">
+                                        <div class="content-title-text">
+                                            <p>Originally posted: @Model[k].DateCreated.ToString("dd MMM, yyyy" + " on " + "HH:mm")</p>
+                                            <p>Last updated: @Model[k].DateUpdated.ToString("dd MMM, yyyy" + " on " + "HH:mm")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p>@Model[k].Title By @Model[k].User</p>
+                                <p>@Html.Raw(Model[k].Body)</p>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="col-md-6 hidden-lg masonry-column">
+                @for (int k = 0; k < Model.Count(); k++)
+                {
+                    <div>
+
+                        @if ((k + 1) % 2 != 0)
+                        {
+                            <a href="@Url.Action("IndividualContentIndex", "Posts", new { Id = Model[k].Id })" class="thumbnail">
+                                <div class="container-for-image">
+                                    @if (Model[k].MediaUrl.Length > 0)
+                                    {
+                                        <img class="img-responsive" src="@Url.Content(Model[k].MediaUrl)" />
+                                    }
+                                    <div class="middle">
+                                        <div class="content-title-text">
+                                            <p>Originally posted: @Model[k].DateCreated.ToString("dd MMM, yyyy" + " on " + "HH:mm")</p>
+                                            <p>Last updated: @Model[k].DateUpdated.ToString("dd MMM, yyyy" + " on " + "HH:mm")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p>@Model[k].Title By @Model[k].User</p>
+                                <p>@Html.Raw(Model[k].Body)</p>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="col-md-6 hidden-lg masonry-column">
+                @for (int k = 0; k < Model.Count(); k++)
+                {
+                    <div>
+                        @if ((k + 1) % 2 == 0)
+                        {
+                            <a href="@Url.Action("IndividualContentIndex", "Posts", new { Id = Model[k].Id })" class="thumbnail">
+                                <div class="container-for-image">
+                                    @if (Model[k].MediaUrl.Length > 0)
+                                    {
+                                        <img class="img-responsive" src="@Url.Content(Model[k].MediaUrl)" />
+                                    }
+                                    <div class="middle">
+                                        <div class="content-title-text">
+                                            <p>Originally posted: @Model[k].DateCreated.ToString("dd MMM, yyyy" + " on " + "HH:mm")</p>
+                                            <p>Last updated: @Model[k].DateUpdated.ToString("dd MMM, yyyy" + " on " + "HH:mm")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p>@Model[k].Title By @Model[k].User</p>
+                                <p>@Html.Raw(Model[k].Body)</p>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
