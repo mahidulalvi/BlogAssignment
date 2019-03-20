@@ -64,18 +64,18 @@ namespace BlogAssignment.Migrations
 
 
             if (!context.Users.Any(
-                p => p.UserName == "guilherme.guizado@mitt.ca"))
+                p => p.UserName == "admin@blog.com"))
             {
                 adminUser = new ApplicationUser();
-                adminUser.UserName = "guilherme.guizado@mitt.ca";
-                adminUser.Email = "guilherme.guizado@mitt.ca";
+                adminUser.UserName = "admin@blog.com";
+                adminUser.Email = "admin@blog.com";
                 userManager.Create(adminUser, "Password-1");                
             }
             else
             {
                 adminUser = context
                     .Users
-                    .First(p => p.UserName == "guilherme.guizado@mitt.ca");                
+                    .First(p => p.UserName == "admin@blog.com");                
             }
 
 

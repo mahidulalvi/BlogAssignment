@@ -1,0 +1,18 @@
+﻿@*@model List<CreatePostViewModelForIndex>*@
+
+<a href="@Url.Action("IndividualContentIndex", "Posts", new { Slug = Model.Slug })" class="thumbnail">
+    <div class="container-for-image">
+        @if (Model.MediaUrl.Length > 0)
+        {
+            <img class="img-responsive" src="@Url.Content(Model.MediaUrl)" />
+        }
+        <div class="middle">
+            <div class="content-title-text">
+                <p>Originally posted: @Model.DateCreated.ToString("dd MMM, yyyy" + " on " + "HH:mm")</p>
+                <p>Last updated: @Model.DateUpdated.ToString("dd MMM, yyyy" + " on " + "HH:mm")</p>
+            </div>
+        </div>
+    </div>    
+    <p>@Model.Title By @Model.User</p>
+    <p>@Html.Raw(Model.Body)</p>
+</a>        

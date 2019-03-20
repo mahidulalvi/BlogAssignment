@@ -13,6 +13,14 @@ namespace BlogAssignment
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            routes.MapMvcAttributeRoutes();
+
+            //routes.MapRoute(
+            //    name: "BlogRoute",
+            //    url: "myblogs/{name}",
+            //    defaults: new { controller = "Posts", action = "DetailsByName" }
+            //);
+
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",

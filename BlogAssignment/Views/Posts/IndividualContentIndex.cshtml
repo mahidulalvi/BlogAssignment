@@ -2,10 +2,12 @@
 
 @{
     ViewBag.Title = "IndividualContentIndex";
+    ViewBag.SecondaryModel = new CreateCommentViewModel();
+    ViewBag.SecondaryModel.PostId = Model.Id;
 }
 
 @section scripts {
-    <script src="~/Scripts/indexOfPostsController.js" type="text/javascript"></script>
+    <script src="~/Scripts/individualIndexOfPostController.js" type="text/javascript"></script>
 }
 
 <h2>Post Details: </h2>
@@ -40,11 +42,9 @@
     </form>
 </div>
 
+<div>    
+    @Html.Partial("_CreateCommentPartial", (CreateCommentViewModel) ViewBag.SecondaryModel)
+</div>
 
 
-
-
-
-
-
-
+@{Html.RenderAction("_CommentsListPartial", "Posts", new { Id = Model.Id });}

@@ -1,0 +1,22 @@
+﻿@model List<CreatePostViewModelForIndex>
+
+@{
+    ViewBag.Title = "_PostsResultPartial";
+}
+
+<h2>Search Results</h2>
+
+@if (!Model.Any())
+{
+    <h3>No results found</h3>
+    @Html.ActionLink("Cancel Searching", "Index", "Posts")
+}
+else
+{
+    for (int i = 0; i < Model.Count(); i++)
+    {
+        <div>
+            @Model[i].Title
+        </div>
+    }
+}

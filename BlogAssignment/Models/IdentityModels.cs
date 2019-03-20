@@ -12,10 +12,12 @@ namespace BlogAssignment.Models
     public class ApplicationUser : IdentityUser
     {
         public virtual List<Post> AllOfMyPosts { get; set; }
+        public virtual List<Comment> AllOfMyComments { get; set; }
 
         public ApplicationUser()
         {
             AllOfMyPosts = new List<Post>();
+            AllOfMyComments = new List<Comment>();
         }
 
 
@@ -36,6 +38,8 @@ namespace BlogAssignment.Models
         }
 
         public DbSet<Post> Posts { set; get; }
+
+        public DbSet<Comment> Comments { get; set; }
 
         public static ApplicationDbContext Create()
         {

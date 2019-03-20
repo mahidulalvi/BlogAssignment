@@ -1,0 +1,21 @@
+﻿@model CreateCommentViewModel
+
+
+@{
+    ViewBag.Title = "_CommentsIndexList";
+}
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<h2>Comment</h2>
+
+<form method="post" action="@Url.Action("CreateAComment", "Posts", new { PostId = Model.PostId })">
+    <div class="form-group">
+        @Html.LabelFor(input => input.Body, "Comment")
+        @Html.TextAreaFor(input => input.Body)
+    </div>
+
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>

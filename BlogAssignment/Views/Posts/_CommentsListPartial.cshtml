@@ -1,0 +1,54 @@
+﻿@model List<CreateCommentViewModelForIndex>
+
+@{
+    ViewBag.Title = "_CommentsListPartial";
+    ViewBag.IdVariable = "";
+}
+
+<h2>Comments</h2>
+
+@if (!Model.Any())
+{
+    <div style="margin-top:15px;">
+        <p><strong>No comments to show</strong></p>
+    </div>
+}
+else
+{
+    <div>
+        @for (int i = 0; i < Model.Count(); i++)
+        {
+            <div>
+                <h5>@Model[i].User</h5>
+                <p>@Model[i].Body</p>
+
+                <span>On @Model[i].DateCreated</span> <span>On @Model[i].DateUpdated</span>
+
+                <div>
+                    @*<a href="@Url.Action("EditAComment", "Posts", new { Id = Model[i].Id })">Edit Comment</a>*@
+                    @*@if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
+                    {*@
+                        <a data-toggle="modal" href="#@Model[i].Id">Edit</a>
+                    @*}*@
+
+                    <div id="@Model[i].Id" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">haha</h4>
+                                </div>
+                                <div class="modal-body">                                    
+                                    @{Html.RenderAction("_EditACommentPartial", "Posts", new { Id = Model[i].Id });}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+        }        
+    </div>
+}
