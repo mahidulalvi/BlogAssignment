@@ -13,7 +13,7 @@ using HtmlAgilityPack;
 namespace BlogAssignment.Controllers
 {
     public class PostsController : Controller
-    {         
+    {
         private ApplicationDbContext DbContext;
         public Random RandomNumber { get; } = new Random();
 
@@ -22,7 +22,7 @@ namespace BlogAssignment.Controllers
             DbContext = new ApplicationDbContext();
         }
 
-        
+
         public ActionResult Index()
         {
             var viewModel = DbContext.Posts
@@ -51,15 +51,15 @@ namespace BlogAssignment.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult IndexForAdmin()
         {
-            var viewModel = DbContext.Posts                
+            var viewModel = DbContext.Posts
                 .AsEnumerable()
                 .Select(
-                post =>  new CreatePostViewModelForIndex
+                post => new CreatePostViewModelForIndex
                 {
                     Id = post.Id,
                     Slug = post.Slug,
                     Title = post.Title,
-                    Body = CutContent(post.Body, 5)/*post.Body.Substring(0, 50)*/,
+                    Body = CutContent(post.Body, 5),
                     Published = post.Published,
                     DateCreated = post.CreatedDate,
                     DateUpdated = post.DateUpdated,
@@ -74,7 +74,7 @@ namespace BlogAssignment.Controllers
 
 
         [HttpGet]
-        public /*PartialView*/ActionResult _PostsResultPartial(AdvancedSearchViewModel result)
+        public ActionResult _PostsResultPartial(AdvancedSearchViewModel result)
         {
             var viewModel = DbContext.Posts
                 .Where(p => p.Title.Contains(result.Body) || p.Slug.Contains(result.Body) || p.Body.Contains(result.Body))
@@ -84,7 +84,7 @@ namespace BlogAssignment.Controllers
                         Id = post.Id,
                         Slug = post.Slug,
                         Title = post.Title,
-                        Body = post.Body,/*post.Body.Substring(0, 50)*/
+                        Body = post.Body,
                         Published = post.Published,
                         DateCreated = post.CreatedDate,
                         DateUpdated = post.DateUpdated,
@@ -94,10 +94,10 @@ namespace BlogAssignment.Controllers
 
             ViewBag.IsASearchResult = true;
 
-            return /*Partial*/View("Index", viewModel);
+            return View("Index", viewModel);
         }
 
-        
+
         public ActionResult _CommentsListPartial(string Id)
         {
             var viewModel = DbContext.Comments
@@ -158,6 +158,34 @@ namespace BlogAssignment.Controllers
             model.DateCreated = post.CreatedDate;
             model.DateUpdated = post.DateUpdated;
 
+
+
+        //Backend Validation Start
+            if ((TempData["SelectedCommentId"] != null && TempData["SelectedCommentEditTimeError"] != null) || TempData["SelectedCommentCreateTimeError"] != null)
+            {
+                if (TempData["SelectedCommentId"] != null)
+                {
+                    ViewBag.SelectedCommentId = TempData["SelectedCommentId"].ToString();
+                    TempData["SelectedCommentId"] = TempData["SelectedCommentId"];
+                }
+                ViewBag.SelectedCommentEditTimeError = TempData["SelectedCommentEditTimeError"];
+
+                if (TempData["ErrorOnBody"] != null && TempData["ErrorOnBody"].ToString() == "true" && TempData["SelectedCommentCreateTimeError"] == null)
+                {
+                    TempData["BodyErrorMessage"] = "Body should not be empty";
+                }
+                else if (TempData["SelectedCommentCreateTimeError"] != null)
+                {
+                    TempData["BodyErrorMessageForCreateComment"] = "Body should not be empty";
+                }
+
+                if (TempData["ErrorOnUpdateReason"] != null && TempData["ErrorOnUpdateReason"].ToString() == "true")
+                {
+                    TempData["UpdateReasonErrorMessage"] = "Update reason should not be empty";
+                }
+            }
+        //Backend Validation End
+
             return View(model);
         }
 
@@ -181,16 +209,16 @@ namespace BlogAssignment.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult CreateAComment(CreateCommentViewModel formData)
+        public ActionResult _CreateCommentPartial(CreateCommentViewModel formData)
         {
-            return SaveComment(null, formData);
+            return SaveComment(formData);
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin, Moderator")]
         public ActionResult _EditACommentPartial(string id)
         {
-            if(id == null)
+            if (id == null)
             {
                 return RedirectToAction(nameof(PostsController.Index));
             }
@@ -198,12 +226,12 @@ namespace BlogAssignment.Controllers
             var comment = DbContext.Comments.FirstOrDefault(
                 p => p.Id == id);
 
-            if(comment == null)
+            if (comment == null)
             {
                 return RedirectToAction(nameof(PostsController.Index));
             }
 
-            var model = new CreateCommentViewModel();
+            var model = new EditCommentViewModel();
             model.Body = comment.Body;
             model.PostId = comment.PostId;
             model.CommentId = comment.Id;
@@ -213,14 +241,10 @@ namespace BlogAssignment.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin, Moderator")]
-        public ActionResult _EditACommentPartial(string id, CreateCommentViewModel formData)
+        public ActionResult _EditACommentPartial(string id, EditCommentViewModel formData)
         {
-            return SaveComment(id, formData);
+            return SaveCommentForEdit(id, formData);
         }
-
-        
-
-
 
 
         [HttpGet]
@@ -231,7 +255,7 @@ namespace BlogAssignment.Controllers
             {
                 return RedirectToAction(nameof(PostsController.Index));
             }
-            
+
             var post = DbContext.Posts.FirstOrDefault(
                 p => p.Id == id);
 
@@ -243,7 +267,7 @@ namespace BlogAssignment.Controllers
             var model = new CreatePostViewModel();
             model.Title = post.Title;
             model.Published = post.Published;
-            model.MediaUrl = post.MediaUrl;           
+            model.MediaUrl = post.MediaUrl;
             model.Body = post.Body;
 
             return View(model);
@@ -266,10 +290,10 @@ namespace BlogAssignment.Controllers
             {
                 return RedirectToAction(nameof(PostsController.Index));
             }
-            
+
             var post = DbContext.Posts.FirstOrDefault(p => p.Id == id);
 
-            if(post == null)
+            if (post == null)
             {
                 return RedirectToAction(nameof(PostsController.Index));
             }
@@ -280,7 +304,7 @@ namespace BlogAssignment.Controllers
 
             DbContext.Posts.Remove(post);
 
-            DbContext.SaveChanges();            
+            DbContext.SaveChanges();
 
             return RedirectToAction(nameof(PostsController.Index));
         }
@@ -301,67 +325,155 @@ namespace BlogAssignment.Controllers
             {
                 return RedirectToAction(nameof(PostsController.Index));
             }
-            
+
+            var post = DbContext.Posts.FirstOrDefault(p => p.Id == comment.PostId);
+
+            if (post == null)
+            {
+                return RedirectToAction(nameof(PostsController.Index));
+            }
 
             DbContext.Comments.Remove(comment);
 
             DbContext.SaveChanges();
 
-            return RedirectToAction(nameof(PostsController.Index));
+            return RedirectToAction(nameof(PostsController.IndividualContentIndex), new { Slug = post.Slug });
         }
 
 
-        private ActionResult SaveComment(string id, CreateCommentViewModel formData)
+        private ActionResult SaveComment(CreateCommentViewModel formData)
         {
+
+            //if (!ModelState.IsValid)
+            //{
+            //    return PartialView(formData);
+            //}
+
             Comment comment;
 
-            if(id == null)
+            comment = new Comment();
+            comment.UserID = User.Identity.GetUserId();
+            comment.PostId = formData.PostId;
+
+            var CurrentUser = DbContext.Users.First(p => p.Id == comment.UserID);
+            CurrentUser.AllOfMyComments.Add(comment);
+
+            var CurrentPost = DbContext.Posts.FirstOrDefault(p => p.Id == comment.PostId);
+            CurrentPost.Comments.Add(comment);
+
+            DbContext.Comments.Add(comment);
+
+        //Backend Validation Start
+            if (string.IsNullOrEmpty(formData.Body))
             {
-                comment = new Comment();
-                comment.UserID = User.Identity.GetUserId();
-                comment.PostId = formData.PostId;
+                //var postOfCreatingComment = DbContext.Posts.FirstOrDefault(p => p.Id == comment.PostId);
 
-                var CurrentUser = DbContext.Users.First(p => p.Id == comment.UserID);
-                CurrentUser.AllOfMyComments.Add(comment);
-
-                var CurrentPost = DbContext.Posts.First(p => p.Id == comment.PostId);
-                CurrentPost.Comments.Add(comment);
-
-                DbContext.Comments.Add(comment);
-            }
-            else
-            {
-                comment = DbContext.Comments.FirstOrDefault(p => p.Id == id);
-                comment.DateUpdated = DateTime.Now;
-                comment.UpdatedDates.Add(comment.DateCreated);
-                comment.UpdatedDates.Add(comment.DateUpdated);
-
-                if (formData.UpdateReason == null || formData.UpdateReason == "")
+                if (CurrentPost == null)
                 {
-                    ModelState.AddModelError(nameof(CreatePostViewModel.Body),
-                        "Update reason should not be empty");
-                    return View();
+                    return RedirectToAction(nameof(PostsController.Index));
                 }
 
-                comment.UpdatedReasons.Add(formData.UpdateReason);
+                if (string.IsNullOrEmpty(formData.Body))
+                {
+                    TempData["ErrorOnBody"] = "true";
+                }
+                else
+                {
+                    TempData["ErrorOnBody"] = "false";
+                }
+
+
+                TempData["SelectedCommentId"] = comment.Id;
+                TempData["SelectedCommentEditTimeError"] = false;
+                TempData["SelectedCommentCreateTimeError"] = true;
+
+
+                return RedirectToAction("IndividualContentIndex", "Posts", new { Slug = CurrentPost.Slug });
+
             }
+        //Backend Validation End
 
             comment.Body = formData.Body;
-            comment.EditHistory.Add(formData.Body);
+
+            comment.EditHistory.Add(formData.Body);            
             DbContext.SaveChanges();
 
-            return RedirectToAction(nameof(PostsController.Index));
+            return RedirectToAction(nameof(PostsController.IndividualContentIndex), new { Slug = CurrentPost.Slug });
         }
 
-        private ActionResult SavePost (string id, CreatePostViewModel formData)
+
+        private ActionResult SaveCommentForEdit(string id, EditCommentViewModel formData)
         {
             if (!ModelState.IsValid)
             {
                 return View();
             }
 
-            if(DbContext.Posts.Any(p => (id == null || p.Id != id) &&
-            p.Title == formData.Title))
+
+            Comment comment;
+
+            comment = DbContext.Comments.FirstOrDefault(p => p.Id == id);
+            comment.DateUpdated = DateTime.Now;
+            comment.UpdatedDates.Add(comment.DateCreated);
+            comment.UpdatedDates.Add(comment.DateUpdated);
+
+            var editingPost = DbContext.Posts.FirstOrDefault(p => p.Id == comment.PostId);
+
+        //Backend Validation Start
+            if (string.IsNullOrEmpty(formData.Body) || string.IsNullOrEmpty(formData.UpdateReason))
+            {
+
+                if (editingPost == null)
+                {
+                    return RedirectToAction(nameof(PostsController.Index));
+                }
+
+                if (string.IsNullOrEmpty(formData.Body))
+                {
+                    TempData["ErrorOnBody"] = "true";
+                }
+                else
+                {
+                    TempData["ErrorOnBody"] = "false";
+                }
+
+
+                if (string.IsNullOrEmpty(formData.UpdateReason))
+                {
+                    TempData["ErrorOnUpdateReason"] = "true";
+                }
+                else
+                {
+                    TempData["ErrorOnUpdateReason"] = "false";
+                }
+
+
+                TempData["SelectedCommentId"] = comment.Id;
+                TempData["SelectedCommentEditTimeError"] = true;
+                return RedirectToAction("IndividualContentIndex", "Posts", new { Slug = editingPost.Slug });
+            }
+        //Backend Validation End
+
+
+            comment.UpdatedReasons.Add(formData.UpdateReason);
+
+            comment.Body = formData.Body;
+            comment.EditHistory.Add(formData.Body);
+            DbContext.SaveChanges();
+
+            return RedirectToAction(nameof(PostsController.IndividualContentIndex), new { Slug = editingPost.Slug });
+        }
+
+
+        private ActionResult SavePost(string id, CreatePostViewModel formData)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            if (DbContext.Posts.Any(p => (id == null || p.Id != id) &&
+             p.Title == formData.Title))
             {
                 ModelState.AddModelError(nameof(CreatePostViewModel.Title),
                     "Post title should be unique");
@@ -369,7 +481,7 @@ namespace BlogAssignment.Controllers
                 return View();
             }
 
-            if(formData.Body == null || formData.Body == "")
+            if (formData.Body == null || formData.Body == "")
             {
                 ModelState.AddModelError(nameof(CreatePostViewModel.Body),
                     "Post body should not be empty");
@@ -414,7 +526,7 @@ namespace BlogAssignment.Controllers
                 post.DateUpdated = DateTime.Now;
             }
 
-            post.Title = formData.Title;            
+            post.Title = formData.Title;
             post.Slug = SlugGenerator(formData.Title);
             post.Body = formData.Body;
             post.Published = formData.Published;
@@ -430,7 +542,7 @@ namespace BlogAssignment.Controllers
                 var fileName = formData.Media.FileName;
                 var fullPathWithName = Constants.MappedUploadFolder + fileName;
 
-                formData.Media.SaveAs(fullPathWithName);                                
+                formData.Media.SaveAs(fullPathWithName);
                 post.MediaUrl = Constants.UploadFolder + fileName;
             }
             else
@@ -460,7 +572,7 @@ namespace BlogAssignment.Controllers
 
             modifiedTitleCopy += number;
 
-            if(!DbContext.Posts.Any(p => p.Slug == modifiedTitleCopy))
+            if (!DbContext.Posts.Any(p => p.Slug == modifiedTitleCopy))
             {
                 return modifiedTitleCopy;
             }

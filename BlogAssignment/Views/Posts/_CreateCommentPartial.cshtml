@@ -5,17 +5,32 @@
     ViewBag.Title = "_CommentsIndexList";
 }
 
+
 @section scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
 
 <h2>Comment</h2>
 
-<form method="post" action="@Url.Action("CreateAComment", "Posts", new { PostId = Model.PostId })">
-    <div class="form-group">
-        @Html.LabelFor(input => input.Body, "Comment")
-        @Html.TextAreaFor(input => input.Body)
-    </div>
+@if (User.Identity.IsAuthenticated)
+{
+    <form method="post" action="@Url.Action("_CreateCommentPartial", "Posts", new { PostId = Model.PostId })">
+        @Html.ValidationSummary(true)
+        <div class="form-group">
+            @Html.TextAreaFor(input => input.Body, new { @class = "create-comment-input" })
+            <p>
+                @Html.ValidationMessageFor(input => input.Body)
+            </p>
+        </div>
 
-    <button type="submit" class="btn btn-default">Submit</button>
-</form>
+        <div>@TempData["BodyErrorMessageForCreateComment"]</div>
+
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+}
+else
+{
+    <div>
+        @Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" }) To Comment
+    </div>
+}

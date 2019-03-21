@@ -8,10 +8,9 @@
 
 <h2>Posts</h2>
 
-@*@{Html.RenderAction("_PostSearchPartial", "PostsController", new AdvancedSearchViewModel());}*@
+
 <div>
-    @Html.Partial("_PostSearchPartial", new AdvancedSearchViewModel())
-    @*@Html.Partial("_PostsResultPartial", new List<CreatePostViewModelForIndex>())*@
+    @Html.Partial("_PostSearchPartial", new AdvancedSearchViewModel())    
 </div>
 
 

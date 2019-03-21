@@ -56,3 +56,26 @@
     padding: 16px 32px;
 }
 
+.user-name {
+    text-decoration: underline solid;
+    color: midnightblue
+}
+
+.individual-comment-body {
+    color: crimson;
+    display: inline-block;
+    margin: 0 0 30px 10px;
+}
+
+.single-comment-block {
+    padding-top: 20px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    margin-bottom: 15px;
+    background-color: moccasin
+}
+
+.create-comment-input {
+    width: 500px;
+    height: 100px;
+}

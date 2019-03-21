@@ -18,37 +18,46 @@ else
     <div>
         @for (int i = 0; i < Model.Count(); i++)
         {
-            <div>
-                <h5>@Model[i].User</h5>
-                <p>@Model[i].Body</p>
+            <div class="single-comment-block">
+                <h5>By <span class="user-name">@Model[i].User</span>,</h5>
+                <p class="individual-comment-body">@Model[i].Body</p>
 
-                <span>On @Model[i].DateCreated</span> <span>On @Model[i].DateUpdated</span>
+                @if(Model[i].DateCreated == Model[i].DateUpdated)
+                {
+                    <p>On @Model[i].DateCreated.ToString("dd MMMM, yyyy") at @Model[i].DateCreated.ToString("hh:mm tt")</p> 
+                }
+                else
+                {
+                    <p>Last Updated: @Model[i].DateUpdated.ToString("dd MMMM, yyyy") at @Model[i].DateUpdated.ToString("hh:mm tt")</p>
+                }
 
                 <div>
                     @*<a href="@Url.Action("EditAComment", "Posts", new { Id = Model[i].Id })">Edit Comment</a>*@
-                    @*@if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
-                    {*@
-                        <a data-toggle="modal" href="#@Model[i].Id">Edit</a>
-                    @*}*@
+                    @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
+                    {
+                        <a class="@Model[i].Id" data-toggle="modal" href="#@Model[i].Id">Edit</a>
 
-                    <div id="@Model[i].Id" class="modal fade" role="dialog">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">haha</h4>
-                                </div>
-                                <div class="modal-body">                                    
-                                    @{Html.RenderAction("_EditACommentPartial", "Posts", new { Id = Model[i].Id });}
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                        <div id="@Model[i].Id" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Edit Comment</h4>
+                                    </div>
+                                    <div class="modal-body">
+
+                                        @{Html.RenderAction("_EditACommentPartial", "Posts", new { Id = Model[i].Id });}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>                    
+                    }
                 </div>
             </div>
-        }        
+        }
     </div>
 }

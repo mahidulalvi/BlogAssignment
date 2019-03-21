@@ -1,20 +1,39 @@
-﻿@model CreateCommentViewModel
+﻿@model EditCommentViewModel
 @{
     ViewBag.Title = "_EditACommentPartial";
 }
 
-<h2>Edit Comment</h2>
-
 <form method="post" action="@Url.Action("_EditACommentPartial", "Posts", new { CommentId = Model.CommentId })">
     @Html.ValidationSummary(true)
-    <div class="form-group">
-        @Html.LabelFor(input => input.Body, "Comment")
-        @Html.TextAreaFor(input => input.Body)
+
+    <div>
+        @if (TempData["SelectedCommentId"] != null && TempData["SelectedCommentId"].ToString() == Model.CommentId)
+        {
+            @TempData["BodyErrorMessage"];
+        }
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(input => input.UpdateReason, "Reason for updating")
+        <h4>Comment</h4>
+        @Html.TextAreaFor(input => input.Body)
+        <p>
+            @Html.ValidationMessageFor(input => input.Body)
+        </p>
+    </div>
+
+    <div>
+        @if (TempData["SelectedCommentId"] != null && TempData["SelectedCommentId"].ToString() == Model.CommentId)
+        {
+            @TempData["UpdateReasonErrorMessage"]
+        }
+    </div>
+
+    <div class="form-group">
+        <h4>Reason For Updating</h4>
         @Html.TextAreaFor(input => input.UpdateReason)
+        <p>
+            @Html.ValidationMessageFor(input => input.UpdateReason)
+        </p>
     </div>
 
     <button type="submit" class="btn btn-default">Submit</button>

@@ -10,6 +10,8 @@
     <script src="~/Scripts/individualIndexOfPostController.js" type="text/javascript"></script>
 }
 
+
+
 <h2>Post Details: </h2>
 <p><strong>@Model.Title</strong></p>
 <p>@Html.Raw(Model.Body)</p>
@@ -27,24 +29,36 @@
     {
         <h5><strong>Status:</strong> Not Published</h5>
     }
-    <h6>Date Created: @Model.DateCreated</h6>
+    <h6>Date Created: @Model.DateCreated.ToString("dd MMMM, yyyy") at @Model.DateCreated.ToString("hh:mm tt")</h6>
     @if (Model.DateUpdated != Model.DateCreated)
     {
-        <h6>Date Updated: @Model.DateUpdated</h6>
+        <h6>Date Updated: @Model.DateUpdated.ToString("dd MMMM, yyyy") at @Model.DateUpdated.ToString("hh:mm tt")</h6>
     }
 </div>
 
+@if (User.IsInRole("Admin"))
+{
+    <div>
+        <a href="@Url.Action("EditAPost", "Posts", new { Id = Model.Id })">Edit post</a>
+
+        <form method="post" action="@Url.Action("DeleteAPost", "Posts", new { Id = Model.Id })">
+            <a href="#" class="btn-delete">Delete</a>
+        </form>
+    </div>
+}
+
 <div>
-    <a href="@Url.Action("EditAPost", "Posts", new { Id = Model.Id })">Edit post</a>
-
-    <form method="post" action="@Url.Action("DeleteAPost", "Posts", new { Id = Model.Id })">
-        <a href="#" class="btn-delete">Delete</a>
-    </form>
-</div>
-
-<div>    
-    @Html.Partial("_CreateCommentPartial", (CreateCommentViewModel) ViewBag.SecondaryModel)
+    @Html.Partial("_CreateCommentPartial", (CreateCommentViewModel)ViewBag.SecondaryModel)
 </div>
 
 
 @{Html.RenderAction("_CommentsListPartial", "Posts", new { Id = Model.Id });}
+
+@if (ViewBag.SelectedCommentEditTimeError == true)
+{
+    <script>
+        $(document).ready(function () {
+            $(".@ViewBag.SelectedCommentId").click();
+        });
+    </script>
+}

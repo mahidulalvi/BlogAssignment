@@ -5,19 +5,12 @@
 
 <h2>Search Posts</h2>
 
-@*<input type="text" class="search-input" style="width: 300px; height: 60px; border: solid thin; border-color: red" value="" />*@
 <form method="get" action='@Url.Action("_PostsResultPartial", "Posts", new { Query = Model.Body })'>
     <div class="form-group">
         @Html.TextBoxFor(input => input.Body, new { @class = "search-input", @autofocus = "" })
     </div>
 
 </form>
-
-
-@*<div id="rerenderingDiv">
-    @{Html.RenderAction("_PostsResultPartial", "Posts", new { Query = Model.Body });
-    }
-</div>*@
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 <script src="~/Scripts/indexOfPostsController.js">
