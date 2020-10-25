@@ -32,7 +32,6 @@ else
                 }
 
                 <div>
-                    @*<a href="@Url.Action("EditAComment", "Posts", new { Id = Model[i].Id })">Edit Comment</a>*@
                     @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
                     {
                         <a class="@Model[i].Id" data-toggle="modal" href="#@Model[i].Id">Edit</a>
