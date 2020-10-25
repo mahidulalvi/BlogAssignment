@@ -34,7 +34,7 @@ namespace PocketGraphs.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("PocketGraphsDBConnectionString", throwIfV1Schema: false)
         {
         }
 
