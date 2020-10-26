@@ -97,8 +97,8 @@ namespace PocketGraphs.Controllers
             return View("Index", viewModel);
         }
 
-
-        public ActionResult _CommentsListPartial(string Id)
+        [ChildActionOnly]
+        public PartialViewResult _CommentsListPartial(string Id)
         {
             var viewModel = DbContext.Comments
                 .Where(p => p.PostId == Id)
@@ -112,7 +112,7 @@ namespace PocketGraphs.Controllers
                     User = comment.User.UserName
                 }).ToList();
 
-            return View(viewModel);
+            return PartialView(viewModel);
         }
 
         private string CutContent(string content, int limitValue)
